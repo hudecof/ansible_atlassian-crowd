@@ -1,0 +1,152 @@
+---
+# tasks file for atlassian-crowd
+
+- name: install requirements
+  apt: name={{ item }} state=present
+  with_items:
+    - python-lxml
+  tags:
+    - atlassian-crowd
+ 
+- name: set basic facts
+  set_fact:
+    download_url: "{{ atlassian_crowd_baseurl }}/atlassian-crowd-{{ atlassian_crowd_version }}.tar.gz"
+    download_tmp: "{{ atlassian_crowd_basedir }}/atlassian-crowd-{{ atlassian_crowd_version }}.tar.gz"
+    atlassian_crowd_dir: "{{ atlassian_crowd_basedir }}/atlassian-crowd-{{ atlassian_crowd_version }}"
+  tags:
+    - atlassian-crowd
+
+- name: create application group
+  group: name={{ atlassian_crowd_group }} system=no gid={{ atlassian_crowd_gid }} state=present 
+  tags:
+    - atlassian-crowd
+
+- name: create user
+  user: name="{{ atlassian_crowd_user }}" system=no createhome=no comment="Atlassian Confluence" group={{ atlassian_crowd_group }} home=/nonexistant shell=/bin/false state=present
+  tags:
+    - atlassian-crowd
+
+- name: create directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - { path: "{{ atlassian_crowd_basedir }}",
+        owner: 'root',
+        group: 'root',
+        mode: '0751' }
+    - { path: "{{ atlassian_crowd_home }}",
+        owner: "{{ atlassian_crowd_user }}",
+        group: "{{ atlassian_crowd_group }}",
+        mode: '0750' }
+  tags:
+    - atlassian-crowd
+
+- name: download atlassian-crowd tar.gz
+  get_url:
+    url: "{{ download_url }}"
+    dest: "{{ download_tmp }}"
+    validate_certs: no
+    force: no
+  tags:
+    - atlassian-crowd
+
+- name: extract the atlassian-crowd tar.gz
+  unarchive:
+    copy: no
+    creates: "{{ atlassian_crowd_dir }}"
+    owner: root
+    group: root
+    src: "{{ download_tmp }}"
+    dest: "{{ atlassian_crowd_basedir }}"
+  tags:
+    - atlassian-crowd
+
+- name: fix directory permissions
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+  with_items:
+    - { path: "{{ atlassian_crowd_dir }}/apache-tomcat/temp",
+        owner: "{{ atlassian_crowd_user }}",
+        group: "{{ atlassian_crowd_group }}" }
+    - { path: "{{ atlassian_crowd_dir }}/apache-tomcat/work",
+        owner: "{{ atlassian_crowd_user }}",
+        group: "{{ atlassian_crowd_group }}" }
+    - { path: "{{ atlassian_crowd_dir }}/apache-tomcat/logs",
+        owner: "{{ atlassian_crowd_user }}",
+        group: "{{ atlassian_crowd_group }}" }
+  tags:
+    - atlassian-crowd
+
+- name: set crowd.home variable
+  lineinfile:
+    dest: "{{ atlassian_crowd_dir }}/crowd-webapp/WEB-INF/classes/crowd-init.properties"
+    regexp: "^\\s*crowd.home\\s*="
+    insertafter: "^#crowd.home="
+    line: "crowd.home = {{ atlassian_crowd_home }}"
+    state: present 
+  tags:
+    - atlassian-crowd
+
+- name: change server.xml
+  xml:
+    file: "{{ atlassian_crowd_dir }}/apache-tomcat/conf/server.xml"
+    xpath: "{{ item.xpath }}"
+    ensure: "{{ item.ensure|default('present') }}"
+    attribute: "{{ item.attribute|default('') }}"
+    value: "{{ item.value|default('') }}"
+  with_items: atlassian_crowd_server_xml
+  tags:
+    - atlassian-crowd
+
+- name: crowd build properties (change)
+  lineinfile:
+    dest: "{{ atlassian_crowd_dir }}/build.properties"
+    regexp: "^{{item.key }}\\s*="
+    line: "{{ item.key }}={{ item.value }}"
+  with_items: atlassian_crowd_build_properties
+  register: build_properties
+  tags:
+    - atlassian-crowd
+
+- name: crowd build properties (build)
+  shell:
+    chdir: "{{ atlassian_crowd_dir }}"
+    free_form: "{{ atlassian_crowd_dir }}/build.sh"
+  when: build_properties.changed
+  tags:
+    - atlassian-crowd
+
+- name: catalina enviroment settings (1)
+  lineinfile:
+    dest: "{{ atlassian_crowd_dir }}/apache-tomcat/bin/setenv.sh"
+    regexp: '^JAVA_OPTS_ANSIBLE='
+    line: 'JAVA_OPTS_ANSIBLE="{{ atlassian_crowd_java_opts|join(" ")}}"'
+    insertbefore: '^JAVA_OPTS'
+  tags:
+    - atlassian-crowd
+
+- name: catalina enviroment settings (2)
+  lineinfile:
+    dest: "{{ atlassian_crowd_dir }}/apache-tomcat/bin/setenv.sh"
+    regexp: '^JAVA_OPTS="\s*\$\{JAVA_OPTS_ANSIBLE\}'
+    line: 'JAVA_OPTS="${JAVA_OPTS_ANSIBLE} ${JAVA_OPTS}"'
+    insertbefore: '^export JAVA_OPTS'
+  tags:
+    - atlassian-crowd
+
+- name: create template startup sctipts
+  template:
+    src: "{{ item }}"
+    dest: "{{ atlassian_crowd_dir }}/{{ item }}"
+  with_items:
+    - startup-init.d
+    - startup-supervisord
+  tags:
+    - atlassian-crowd

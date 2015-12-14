@@ -1,0 +1,10 @@
+[program:crowd]
+command={{ atlassian_crowd_dir }}/apache-tomcat/bin/start-crowd.sh -fg
+numprocs=1
+process_name=%(program_name)s
+user={{ atlassian_crowd_user }}
+killasgroup=true
+stopasgroup=true
+stopsignal=INT
+startsecs=5
+stopwaitsecs=60

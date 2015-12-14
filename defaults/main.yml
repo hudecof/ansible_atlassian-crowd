@@ -1,0 +1,19 @@
+---
+# defaults file for atlassian-crowd
+atlassian_crowd_version: CHANGEME
+
+atlassian_crowd_baseurl: https://www.atlassian.com/software/crowd/downloads/binary/
+atlassian_crowd_basedir: /opt/atlassian
+atlassian_crowd_home: /srv/atlassian/crowd
+
+atlassian_crowd_user: crowd
+atlassian_crowd_uid: 10002
+atlassian_crowd_group: crowd
+atlassian_crowd_gid: 10002
+
+
+atlassian_crowd_server_xml: []
+
+atlassian_crowd_java_opts: []
+
+atlassian_crowd_build_propertirs: []
