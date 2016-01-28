@@ -22,7 +22,7 @@
     - atlassian-crowd
 
 - name: create user
-  user: name="{{ atlassian_crowd_user }}" system=no createhome=no comment="Atlassian Confluence" group={{ atlassian_crowd_group }} home=/nonexistant shell=/bin/false state=present
+  user: name="{{ atlassian_crowd_user }}" uid={{ atlassian_crowd_uid }} system=no createhome=no comment="Atlassian Confluence" group={{ atlassian_crowd_group }} home=/nonexistant shell=/bin/false state=present
   tags:
     - atlassian-crowd
 
@@ -84,6 +84,23 @@
   tags:
     - atlassian-crowd
 
+- name: fix shell script permissions (find)
+  shell:
+    find {{ atlassian_crowd_dir }}/apache-tomcat/bin -type f -name '*.sh'
+  register: files_to_change
+  tags:
+    - atlassian-crowd
+
+- name: fix shell script permissions (change)
+  file:
+    path: "{{ item }}"
+    state: file
+    group: "{{ atlassian_crowd_group }}"
+    mode: "g+x"
+  with_items: files_to_change.stdout_lines
+  tags:
+    - atlassian-crowd
+ 
 - name: set crowd.home variable
   lineinfile:
     dest: "{{ atlassian_crowd_dir }}/crowd-webapp/WEB-INF/classes/crowd-init.properties"

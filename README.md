@@ -57,6 +57,10 @@ Role Variables
 	- key: crowd.tomcat.connector.port
 	  value:  9999
 
+
+In version 2.8.3 a bellow there is no possibility to run application in foreground.
+If you want to use a supervisor, follow the changes in this ticket https://jira.atlassian.com/browse/CWD-4318
+
 Dependencies
 ------------
 

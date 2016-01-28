@@ -21,18 +21,18 @@ CATALINA_HOME="{{ atlassian_crowd_dir }}/apache-tomcat"
 start() {
     echo "Starting Crowd: "
     if [ "x$USER" != "x$RUN_AS_USER" ]; then
-        su - $RUN_AS_USER -c "$CATALINA_HOME/bin/start-crowd.sh"
+        su - $RUN_AS_USER -c "$CATALINA_HOME/bin/startup.sh"
     else
-        $CATALINA_HOME/bin/start-crowd.sh
+        $CATALINA_HOME/bin/startup.sh
     fi
     echo "done."
 }
 stop() {
     echo "Shutting down Crowd: "
     if [ "x$USER" != "x$RUN_AS_USER" ]; then
-        su - $RUN_AS_USER -c "$CATALINA_HOME/bin/stop-crowd.sh"
+        su - $RUN_AS_USER -c "$CATALINA_HOME/bin/shutdown.sh"
     else
-        $CATALINA_HOME/bin/stop-crowd.sh
+        $CATALINA_HOME/bin/shutdown.sh
     fi
     echo "done."
 }
