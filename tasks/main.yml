@@ -22,7 +22,7 @@
     - atlassian-crowd
 
 - name: create user
-  user: name="{{ atlassian_crowd_user }}" uid={{ atlassian_crowd_uid }} system=no createhome=no comment="Atlassian Confluence" group={{ atlassian_crowd_group }} home=/nonexistant shell=/bin/false state=present
+  user: name="{{ atlassian_crowd_user }}" uid={{ atlassian_crowd_uid }} system=no createhome=no comment="Atlassian Crowd" group={{ atlassian_crowd_group }} home=/nonexistant shell=/bin/false state=present
   tags:
     - atlassian-crowd
 
