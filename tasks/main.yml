@@ -97,7 +97,7 @@
     state: file
     group: "{{ atlassian_crowd_group }}"
     mode: "g+x"
-  with_items: files_to_change.stdout_lines
+  with_items: "{{ files_to_change.stdout_lines }}"
   tags:
     - atlassian-crowd
  
@@ -118,7 +118,7 @@
     ensure: "{{ item.ensure|default('present') }}"
     attribute: "{{ item.attribute|default('') }}"
     value: "{{ item.value|default('') }}"
-  with_items: atlassian_crowd_server_xml
+  with_items: "{{ atlassian_crowd_server_xml }}"
   tags:
     - atlassian-crowd
 
@@ -127,7 +127,7 @@
     dest: "{{ atlassian_crowd_dir }}/build.properties"
     regexp: "^{{item.key }}\\s*="
     line: "{{ item.key }}={{ item.value }}"
-  with_items: atlassian_crowd_build_properties
+  with_items: "{{ atlassian_crowd_build_properties }}"
   register: build_properties
   tags:
     - atlassian-crowd
