@@ -1,2 +1,7 @@
 ---
 # handlers file for atlassian-crowd
+
+- name: crowd build properties (build)
+  command: "{{ atlassian_crowd_dir }}/build.sh"
+  args:
+    chdir: "{{ atlassian_crowd_dir }}"

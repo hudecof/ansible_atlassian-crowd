@@ -1,0 +1,15 @@
+---
+  atlassian_crowd_version: 3.0.2
+  atlassian_crowd_server_xml:
+    - xpath: /Server/Service/Connector
+      ensure: present
+      attribute: proxyPort
+      value: 443
+    - xpath: /Server/Service/Connector
+      ensure: present
+      attribute: scheme
+      value: https
+    - xpath: /Server/Service/Connector
+      ensure: present
+      attribute: proxyName
+      value: crowd.example.com

@@ -1,0 +1,4 @@
+---
+
+__atlassian_crowd_packages:
+  - {'name': 'python-lxml', 'state': 'present'}

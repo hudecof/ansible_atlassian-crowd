@@ -1,11 +1,10 @@
 ---
 galaxy_info:
   author: Peter Hudec
-  description: Install / upgrade Atlasssian Crowd 
+  description: Install / upgrade Atlasssian Crowd
   company: CNC, a.s.
   license: BSD
-  min_ansible_version: 1.7
-  
+  min_ansible_version: 2.1
   platforms:
   - name: EL
     versions:
@@ -13,27 +12,14 @@ galaxy_info:
     - 7
   - name: Ubuntu
     versions:
-    - precise
     - trusty
+    - xenial
   - name: Debian
     versions:
     - jessie
-    - wheezy
-
-  categories:
-  #- cloud
-  #- cloud:ec2
-  #- cloud:gce
-  #- cloud:rax
-  #- clustering
-  #- database
-  #- database:nosql
-  #- database:sql
-  - development
-  #- monitoring
-  #- networking
-  #- packaging
-  #- system
-  #- web
-dependencies: 
- - cmprescott.xml
+    - stretch
+  galaxy_tags:
+    - atlasssian
+    - crowd
+dependencies:
+  - cmprescott.xml

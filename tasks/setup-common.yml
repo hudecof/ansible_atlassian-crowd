@@ -1,0 +1,37 @@
+---
+
+- name: create application group
+  group:
+    name: "{{ atlassian_crowd_group }}"
+    system: no
+    gid: "{{ atlassian_crowd_gid }}"
+    state: present
+
+- name: create user
+  user:
+    name: "{{ atlassian_crowd_user }}"
+    uid: "{{ atlassian_crowd_uid }}"
+    system: no
+    createhome: no
+    comment: "Atlassian Crowd"
+    group: "{{ atlassian_crowd_group }}"
+    home: /nonexistant
+    shell: /bin/false
+    state: present
+
+- name: create directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ item.owner }}"
+    group: "{{ item.group }}"
+    mode: "{{ item.mode }}"
+  with_items:
+    - {path: "{{ atlassian_crowd_basedir }}",
+       owner: 'root',
+       group: 'root',
+       mode: '0751'}
+    - {path: "{{ atlassian_crowd_home }}",
+       owner: "{{ atlassian_crowd_user }}",
+       group: "{{ atlassian_crowd_group }}",
+       mode: '0750'}

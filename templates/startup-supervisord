@@ -1,5 +1,5 @@
 [program:crowd]
-command={{ atlassian_crowd_dir }}/apache-tomcat/bin/startup.sh -fg
+command={{ atlassian_crowd_dir }}/apache-tomcat/bin/catalina.sh run
 numprocs=1
 process_name=%(program_name)s
 user={{ atlassian_crowd_user }}

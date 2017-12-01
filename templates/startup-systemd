@@ -1,0 +1,13 @@
+[Unit]
+Description=Crowd
+After=network.target
+
+[Service]
+Type=forking
+User={{ atlassian_crowd_user }}
+ExecStart={{ atlassian_crowd_dir }}/apache-tomcat/bin/startup.sh
+ExecStop={{ atlassian_crowd_dir }}/apache-tomcat/bin/shutdown.sh
+PIDFile={{ atlassian_crowd_dir }}/apache-tomcat/work/catalina.pid
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,50 @@
+---
+
+- name: set crowd.home variable
+  lineinfile:
+    dest: "{{ atlassian_crowd_dir }}/crowd-webapp/WEB-INF/classes/crowd-init.properties"
+    regexp: "^\\s*crowd.home\\s*="
+    insertafter: "^#crowd.home="
+    line: "crowd.home = {{ atlassian_crowd_home }}"
+    state: present
+
+- name: change server.xml
+  xml:
+    file: "{{ atlassian_crowd_dir }}/apache-tomcat/conf/server.xml"
+    xpath: "{{ item.xpath }}"
+    ensure: "{{ item.ensure|default('present') }}"
+    attribute: "{{ item.attribute|default('') }}"
+    value: "{{ item.value|default('') }}"
+  with_items: "{{ atlassian_crowd_server_xml }}"
+
+- name: crowd build properties (change)
+  lineinfile:
+    dest: "{{ atlassian_crowd_dir }}/build.properties"
+    regexp: "^{{item.key }}\\s*="
+    line: "{{ item.key }}={{ item.value }}"
+  with_items: "{{ atlassian_crowd_build_properties }}"
+  notify:
+    - crowd build properties (build)
+
+- name: catalina enviroment settings (1)
+  lineinfile:
+    dest: "{{ atlassian_crowd_dir }}/apache-tomcat/bin/setenv.sh"
+    regexp: '^JAVA_OPTS_ANSIBLE='
+    line: 'JAVA_OPTS_ANSIBLE="{{ atlassian_crowd_java_opts|join(" ")}}"'
+    insertbefore: '^JAVA_OPTS'
+
+- name: catalina enviroment settings (2)
+  lineinfile:
+    dest: "{{ atlassian_crowd_dir }}/apache-tomcat/bin/setenv.sh"
+    regexp: '^JAVA_OPTS="\s*\$\{JAVA_OPTS_ANSIBLE\}'
+    line: 'JAVA_OPTS="${JAVA_OPTS_ANSIBLE} ${JAVA_OPTS}"'
+    insertbefore: '^export JAVA_OPTS'
+
+- name: create template startup sctipts
+  template:
+    src: "{{ item }}"
+    dest: "{{ atlassian_crowd_dir }}/{{ item }}"
+  with_items:
+    - startup-init.d
+    - startup-supervisord
+    - startup-systemd

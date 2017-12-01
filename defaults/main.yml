@@ -1,5 +1,7 @@
 ---
 # defaults file for atlassian-crowd
+atlassian_crowd_packages: "{{ __atlassian_crowd_packages }}"
+
 atlassian_crowd_version: CHANGEME
 
 atlassian_crowd_baseurl: https://www.atlassian.com/software/crowd/downloads/binary/
