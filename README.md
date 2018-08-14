@@ -17,7 +17,7 @@ I have my own role `hudecof.java` to do that.
 You could prefer another  *database* as me. So this is out of scope too.  
 
 The *tar.gz* version do not have startup script. I use `supervisord` to do this job.
-I will generate template for `supervisord` and `init.d` and put it into *installation directory* directory.
+I will generate template for `supervisord` and `init.d` and put it into *installation directory*.
 
 If you are updating, shutdown you old instance manually. This role do not handle this!.
 It will just setup your new instance with your customizations.
@@ -34,7 +34,7 @@ It will just setup your new instance with your customizations.
 
 `atlassian_crowd_user`, `atlassian_crowd_uid`, `atlassian_crowd_group`, `atlassian_crowd_gid` are variables to setup dedicated user to run the instance 
 
-`atlassian_crowd_server_xml` is list of changes to `server.xml` It uses XPath to edit/add/remoce exiting properties.
+`atlassian_crowd_server_xml` is list of changes to `server.xml` It uses XPath to edit/add/remove exiting properties.
 
     atlassian_crowd_server_xml:
     - xpath: /Server/Service/Connector
@@ -60,7 +60,7 @@ If you want to use a supervisor, follow the changes in this ticket https://jira.
 
 ## Dependencies
 
-This role depens on the `cmprescott.xml` role/library.
+This role depends on the `cmprescott.xml` role/library.
 
 ## Example Playbook
 
