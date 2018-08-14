@@ -11,12 +11,8 @@
     - "os-{{ ansible_distribution }}.yml"
     - "os-{{ ansible_os_family }}.yml"
   tags:
-    - atlassian-crowd
-    - atlassian-crowd:packages
-    - atlassian-crowd:setup
-    - atlassian-crowd:install
-    - atlassian-crowd:config
-
+    - always
+    
 - name: include package tasks
   include: packages-{{ ansible_os_family }}.yml
   tags:
