@@ -1,7 +1,6 @@
 ---
 # tasks file for atlassian-crowd
 
-
 - name: "common | set os specific variables"
   include_vars: "{{ item }}"
   with_first_found:
@@ -12,7 +11,7 @@
     - "os-{{ ansible_os_family }}.yml"
   tags:
     - always
-    
+
 - name: include package tasks
   include: packages-{{ ansible_os_family }}.yml
   tags:
